@@ -8,7 +8,6 @@ import java.util.Base64;
 
 public class Main {
 
-
     public static void main(String[] args) {
         GridPainter3D p = new GridPainter3D();
         p.paint(Color.RED, Color.GREEN, new File(

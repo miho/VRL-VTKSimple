@@ -40,8 +40,8 @@ public class VTUViewer implements Serializable {
         return painter;
     }
 
-    private  AtomicBoolean getInvokedFromThread() {
-        if(invokedFromThread==null) {
+    private AtomicBoolean getInvokedFromThread() {
+        if (invokedFromThread == null) {
             invokedFromThread = new AtomicBoolean(false);
         }
 
@@ -49,45 +49,39 @@ public class VTUViewer implements Serializable {
     }
 
     private void stopThread() {
-        if(thread!=null) {
+        if (thread != null) {
             thread.stopThread();
-            thread=null;
+            thread = null;
         }
     }
 
-    @MethodInfo(hide=false)
+    @MethodInfo(hide = false)
     public VGeometry3D view(MethodRequest mReq,
                             @ParamInfo(
-                                    name="VTU-File(s)",
+                                    name = "VTU-File(s)",
                                     style = "load-dialog",
-                                    options="endings=[\".vtu\"]; description=\"*.vtu - Files\"")
+                                    options = "endings=[\".vtu\"]; description=\"*.vtu - Files\"")
                                     File fileOrFolder,
-                            @ParamInfo(name="Data Array", options="value=\"c\"") String dataArray) {
+                            @ParamInfo(name = "Data Array", options = "value=\"c\"") String dataArray) {
 
-        if(!getInvokedFromThread().get()) {
-            DefaultMethodRepresentation mRep = mReq.getMethod();
-            VisualCanvas canvas = (VisualCanvas) mRep.getMainCanvas();
-            stopThread();
-            thread = registerListener(fileOrFolder, (f) -> {
-                VSwingUtil.invokeAndWait(()-> {
-                    fileToPlot = f;
-                    System.out.println("f: " + f);
-                    try {
-                        getInvokedFromThread().set(true);
-                        mRep.invoke();
-                    } catch (InvocationTargetException e) {
-                        e.printStackTrace();
-                        throw new RuntimeException("Cannot invoke view-method", e);
-                    }
-                });
+
+        DefaultMethodRepresentation mRep = mReq.getMethod();
+        VisualCanvas canvas = (VisualCanvas) mRep.getMainCanvas();
+        stopThread();
+        thread = registerListener(fileOrFolder, (f) -> {
+            VSwingUtil.invokeAndWait(() -> {
+                fileToPlot = f;
+                System.out.println("f: " + f);
+                getInvokedFromThread().set(true);
+                VGeometry3D value = null;
+                if (fileToPlot != null) {
+                    value = getPainter().paint(Color.GREEN, Color.RED, fileToPlot, dataArray, false);
+                }
+                mRep.getReturnValue().setValue(value);
             });
-            VRL.getCurrentProjectController().addSessionThread(thread);
-        }
+        });
+        VRL.getCurrentProjectController().addSessionThread(thread);
 
-        invokedFromThread.set(false);
-        if(fileToPlot!=null) {
-            return getPainter().paint(Color.GREEN, Color.RED, fileToPlot, dataArray, false);
-        }
 
         return null;
     }
