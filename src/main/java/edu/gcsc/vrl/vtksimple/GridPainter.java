@@ -13,7 +13,7 @@ import java.io.Serializable;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-@ComponentInfo(name = "VTU-Viewer (2D, Legacy)", category = "VTK")
+@ComponentInfo(name = "VTU-Viewer (2D, Deprecated)", category = "VTK")
 public class GridPainter implements Serializable{
 
     private static final long serialVersionUID = 1L;

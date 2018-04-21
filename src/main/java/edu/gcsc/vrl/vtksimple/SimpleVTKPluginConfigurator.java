@@ -65,7 +65,8 @@ public class SimpleVTKPluginConfigurator extends VPluginConfigurator{
            //
            // vapi.addComponent(MyComponent.class);
            // vapi.addTypeRepresentation(MyType.class);
-           
+
+           vapi.addComponent(VTUViewer.class);
            vapi.addComponent(GridPainter.class);
            vapi.addComponent(GridPainter3D.class);
        }

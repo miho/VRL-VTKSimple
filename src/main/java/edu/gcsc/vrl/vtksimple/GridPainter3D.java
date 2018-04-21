@@ -24,7 +24,7 @@ import javax.vecmath.Color3f;
  *
  * @author Michael Hoffer <info@michaelhoffer.de>
  */
-@ComponentInfo(name = "VTU-Viewer (3D)", category = "VTK")
+@ComponentInfo(name = "VTU-Viewer (Deprecated)", category = "VTK")
 public class GridPainter3D implements Serializable {
 
     private static final long serialVersionUID = 1L;
