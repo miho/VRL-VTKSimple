@@ -35,7 +35,7 @@ public class DataArray {
 
         for (int j = 0; j < n.getAttributes().getLength(); j++) {
             Node a = n.getAttributes().item(j);
-//            System.out.println("Attribute " + j + " : " + a);
+//            log("Attribute " + j + " : " + a);
 
             attributes.put(a.getNodeName(), a.getNodeValue());
         }
@@ -52,11 +52,11 @@ public class DataArray {
             name = attributes.get("Name").trim();
         }
 
-        System.out.println("DataArray: " + name);
-        System.out.println(">> type: " + type);
+        log("DataArray: " + name);
+        log(">> type: " + type);
 
         if (attributes.get("format").trim().equals("binary")) {
-            System.out.println(">> format: binary");
+            log(">> format: binary");
 
             // each Base64 entry consists of two entries
             // we only use the second one to get rid of the data length
@@ -73,8 +73,8 @@ public class DataArray {
 
             System.arraycopy(origData,4,data,0,data.length);
 
-            System.out.println(">> BASE64 String length: " + dataString.length());
-            System.out.println(">> array size: " + data.length);
+            log(">> BASE64 String length: " + dataString.length());
+            log(">> array size: " + data.length);
 
         } else {
             // don't know what to do...
@@ -150,4 +150,20 @@ public class DataArray {
     public String getName() {
         return name;
     }
+
+    private static void log(String msg) {
+        if(isDebug()) {
+            System.out.println("DataArray: " + msg);
+        }
+    }
+
+    public static void setDebug(boolean debug) {
+        DataArray.debug = debug;
+    }
+
+    private static boolean isDebug() {
+        return debug;
+    }
+
+    private static boolean debug;
 }

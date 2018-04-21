@@ -36,8 +36,8 @@ public class UnstructuredGrid implements Serializable {
             DocumentBuilder db = dbf.newDocumentBuilder();
             Document doc = db.parse(file);
             doc.getDocumentElement().normalize();
-            System.out.println("Root element "
-                    + doc.getDocumentElement().getNodeName());
+            //System.out.println("Root element "
+            //        + doc.getDocumentElement().getNodeName());
 
             String byteOrderString = doc.getDocumentElement().getAttribute("byte_order");
 

@@ -8,6 +8,7 @@ import eu.mihosoft.vrl.reflection.DefaultMethodRepresentation;
 import eu.mihosoft.vrl.reflection.VisualCanvas;
 import eu.mihosoft.vrl.system.VRL;
 import eu.mihosoft.vrl.types.MethodRequest;
+import eu.mihosoft.vrl.types.VGeometry3DType;
 import eu.mihosoft.vrl.v3d.VGeometry3D;
 import eu.mihosoft.vrl.visual.VSwingUtil;
 
@@ -55,7 +56,7 @@ public class VTUViewer implements Serializable {
         }
     }
 
-    @MethodInfo(hide = false)
+    @MethodInfo(hide = false, valueOptions = "serialization=false;doEmpty=false")
     public VGeometry3D view(MethodRequest mReq,
                             @ParamInfo(
                                     name = "VTU-File(s)",
@@ -64,24 +65,47 @@ public class VTUViewer implements Serializable {
                                     File fileOrFolder,
                             @ParamInfo(name = "Data Array", options = "value=\"c\"") String dataArray) {
 
-
         DefaultMethodRepresentation mRep = mReq.getMethod();
-        VisualCanvas canvas = (VisualCanvas) mRep.getMainCanvas();
+
+        if(thread!=null && thread.isAlive()) {
+            //mRep.changeInvokeButtonTextIfButtonIsPresent("")
+        }
+
         stopThread();
         thread = registerListener(fileOrFolder, (f) -> {
-            VSwingUtil.invokeAndWait(() -> {
-                fileToPlot = f;
-                System.out.println("f: " + f);
-                getInvokedFromThread().set(true);
-                VGeometry3D value = null;
-                if (fileToPlot != null) {
-                    value = getPainter().paint(Color.GREEN, Color.RED, fileToPlot, dataArray, false);
-                }
-                mRep.getReturnValue().setValue(value);
-            });
+            AtomicBoolean success = new AtomicBoolean(false);
+            int counter = 0;
+            while(!success.get() && counter < 10) {
+                counter++;
+                VSwingUtil.invokeAndWait(() -> {
+                    fileToPlot = f;
+                    getInvokedFromThread().set(true);
+                    VGeometry3D value = null;
+                    if (fileToPlot != null && fileToPlot.exists()) {
+                        try {
+                            value = getPainter().paint(Color.GREEN, Color.RED, fileToPlot, dataArray, false);
+                        } catch (Exception ex) {
+                            // we continue the visualization, even if errors occur
+                            success.set(false);
+                        }
+                    }
+                    if (value != null) {
+                        mRep.getReturnValue().setViewValue(value);
+                        mRep.getParentObject().getParentWindow().setTitle("VTU-Viewer: " + fileToPlot.getName());
+                        success.set(true);
+                    }
+                });
+            }
         });
         VRL.getCurrentProjectController().addSessionThread(thread);
 
+        if(!fileOrFolder.isDirectory() && fileOrFolder.exists()) {
+            fileToPlot = fileOrFolder;
+            VGeometry3D value = getPainter().paint(Color.GREEN, Color.RED, fileToPlot, dataArray, false);
+            mRep.getReturnValue().setValue(value);
+        }
+
+        mRep.getParentObject().getParentWindow().setTitle("VTU-Viewer"+(fileOrFolder.exists()?"":": file does not exist!"));
 
         return null;
     }
@@ -107,7 +131,7 @@ public class VTUViewer implements Serializable {
     }
 
 
-    public static StoppableThread registerListener(File folder, Consumer<File> consumer) {
+    public static StoppableThread registerListener(File fileOrFolder, Consumer<File> consumer) {
 
         StoppableThread t = new StoppableThread() {
             @Override
@@ -115,7 +139,13 @@ public class VTUViewer implements Serializable {
                 try (WatchService watchService
                              = FileSystems.getDefault().newWatchService()) {
 
-                    Path path = folder.toPath();
+                    Path path;
+
+                    if(fileOrFolder.isDirectory()) {
+                        path = fileOrFolder.toPath();
+                    }else {
+                        path = fileOrFolder.getAbsoluteFile().getParentFile().toPath();
+                    }
 
                     path.register(
                             watchService,
@@ -129,7 +159,7 @@ public class VTUViewer implements Serializable {
                         for (WatchEvent<?> event : key.pollEvents()) {
                             if (event.context() instanceof Path) {
                                 File changedFile = ((Path) event.context()).toFile();
-                                consumer.accept(changedFile);
+                                consumer.accept(new File(path.toFile(), changedFile.getName()));
                             }
                         }
                         key.reset();

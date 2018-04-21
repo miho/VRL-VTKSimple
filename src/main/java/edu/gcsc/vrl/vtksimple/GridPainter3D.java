@@ -172,42 +172,43 @@ public class GridPainter3D implements Serializable {
 //                    + a.getType() + ", #Comp: " + a.getNumberOfComponents());
             if (a.getNumberOfComponents() == 3) {
                 pointData = (float[]) a.getDataDecoder().getArray();
-                System.out.println("Points: " + pointData.length);
+                log("Points: " + pointData.length);
             }
 
             if (a.getName().equals("connectivity")) {
                 connectivity = (int[]) a.getDataDecoder().getArray();
-                System.out.println("connectivity: " + connectivity.length);
+                log("connectivity: " + connectivity.length);
             }
 
             if (a.getName().equals("offsets")) {
                 offsets = (int[]) a.getDataDecoder().getArray();
-                System.out.println("offsets: " + offsets.length);
+                log("offsets: " + offsets.length);
             }
 
             if (a.getName().equals("types")) {
                 types = (byte[]) a.getDataDecoder().getArray();
-                System.out.println("types: " + types.length);
+                log("types: " + types.length);
             }
 
             if (a.getName().equals(colorArrayName)) {
                 colors = (float[]) a.getDataDecoder().getArray();
-                System.out.println("colors: " + colors.length);
+                log("colors: " + colors.length);
             }
         }
-        
-        System.out.print("Used Cell Types: ");
+
+
+        log("Used Cell Types: ");
         
         Set<Byte> shownTypes = new HashSet<Byte>();
         
         for (byte b : types) {
             if (!shownTypes.contains(b)) {
-                System.out.print(b + " ");
+                log(b + " ");
                 shownTypes.add(b);
             }
         }
-        
-        System.out.println("");
+
+        log("");
 
         // convert point data from one dimensional array to three dimensional
         // point array
@@ -457,5 +458,21 @@ public class GridPainter3D implements Serializable {
                 showVolume && hasVolumeElements);
 
         return result;
+    }
+
+    private void log(String msg) {
+        if(isDebug()) {
+            System.out.println("VTU-Plotter: "+msg);
+        }
+    }
+
+    private static boolean debug;
+
+    public static boolean isDebug() {
+        return debug;
+    }
+
+    public static void setDebug(boolean state) {
+        GridPainter3D.debug = state;
     }
 }
