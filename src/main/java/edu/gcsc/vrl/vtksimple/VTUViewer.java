@@ -130,8 +130,7 @@ public class VTUViewer implements Serializable {
         }
     }
 
-
-    public static StoppableThread registerListener(File fileOrFolder, Consumer<File> consumer) {
+    protected static StoppableThread registerListener(File fileOrFolder, Consumer<File> consumer) {
 
         StoppableThread t = new StoppableThread() {
             @Override

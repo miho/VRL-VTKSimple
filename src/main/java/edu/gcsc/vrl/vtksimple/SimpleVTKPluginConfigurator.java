@@ -20,7 +20,7 @@ public class SimpleVTKPluginConfigurator extends VPluginConfigurator{
 
     public SimpleVTKPluginConfigurator() {
         //specify the plugin name and version
-       setIdentifier(new PluginIdentifier("VRL-VTKSimple", "0.2"));
+       setIdentifier(new PluginIdentifier("VRL-VTKSimple", "0.3"));
 
        // optionally allow other plugins to use the api of this plugin
        // you can specify packages that shall be
