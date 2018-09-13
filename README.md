@@ -45,12 +45,12 @@ task to build and install the plugin.
 
 ##### Bash (Linux/OS X/Cygwin/other Unix-like OS)
 
-    cd Path/To/VRL-Tutorial-Plugin-01/VRL-Tutorial-Plugin-01
+    cd Path/To/VRL-VTKSimple
     ./gradlew installVRLPlugin
     
 ##### Windows (CMD)
 
-    cd Path\To\VRL-Tutorial-Plugin-01\VRL-Tutorial-Plugin-01
+    cd Path\To\VRL-VTKSimple
     gradlew installVRLPlugin
 
 Finally, restart VRL-Studio
