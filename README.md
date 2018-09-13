@@ -1,8 +1,6 @@
-# VRL-Tutorial-Plugin-01
+# VRL-VTKSimple
 
-[![Build Status](https://travis-ci.org/miho/VRL-Tutorial-Plugin-01.png)](https://travis-ci.org/miho/VRL-Tutorial-Plugin-01)
-
-This project demonstrates how to create a simple [VRL](http://vrl-studio.mihosoft.eu) plugin.
+This project adds (partial) VTK visualization capabilities to [VRL-Studio](http://vrl-studio.mihosoft.eu).
 
 Webpage: http://vrl-studio.mihosoft.eu
 
